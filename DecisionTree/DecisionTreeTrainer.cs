@@ -77,6 +77,38 @@
         return new InternalNode(bestFeature, bestThreshold, trueChild, falseChild);
     }
 
+    public IDecisionNode PruneTree(IDecisionNode currentNode, List<WineSample> validationDataForThisNode)
+    {
+        if (currentNode is LeafNode)
+        {
+            return currentNode;
+        }
+
+        if (currentNode is InternalNode internalNode)
+        {
+            var (trueValSet, falseValSet) = SplitData(validationDataForThisNode, internalNode.FeatureName, internalNode.Threshold);
+
+            internalNode.TrueChild = PruneTree(internalNode.TrueChild, trueValSet);
+            internalNode.FalseChild = PruneTree(internalNode.FalseChild, falseValSet);
+
+
+            int errorIfKept = internalNode.CalculateError(validationDataForThisNode);
+
+            string majorityClass = GetMajorityCultivar(validationDataForThisNode);
+            LeafNode candidateLeaf = new LeafNode(majorityClass);
+
+            int errorIfPruned = candidateLeaf.CalculateError(validationDataForThisNode);
+
+            if (errorIfPruned < errorIfKept)
+            {
+                Console.WriteLine($"Przycęto węzeł '{internalNode.FeatureName} > {internalNode.Threshold:F2}'. Błąd poddrzewa przed: {errorIfKept}, błąd po przycięciu: {errorIfPruned}.");
+                return candidateLeaf;
+            }
+        }
+        return currentNode;
+    }
+
+
     private (List<WineSample> trueSet, List<WineSample> falseSet) SplitData(List<WineSample> data, string featureName, float threshold)
     {
         var trueSet = new List<WineSample>();

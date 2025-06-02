@@ -51,6 +51,7 @@ public interface IDecisionNode
 {
     string Predict(WineSample sample);
     void PrintTree(string indent = "", bool isLast = true);
+    int CalculateError(List<WineSample> data);
 }
 
 //To jest ten ostatni wezeł co juz daje wynik
@@ -73,6 +74,19 @@ public class LeafNode : IDecisionNode
         Console.Write(indent);
         Console.Write(isLast ? "└── " : "├── ");  // UWAGA ten pierwszy kikut to PRAWDA a ten drugi to FAŁSZ
         Console.WriteLine($"Kultywar: {Cultivar}");
+    }
+
+    public int CalculateError(List<WineSample> data)
+    {
+        int errors = 0;
+        foreach (var sample in data)
+        {
+            if (Predict(sample) != sample.Cultivar)
+            {
+                errors++;
+            }
+        }
+        return errors;
     }
 }
 
@@ -112,5 +126,18 @@ public class InternalNode : IDecisionNode
 
         FalseChild.PrintTree(indent + (isLast ? "    " : "│   "), false);
         TrueChild.PrintTree(indent + (isLast ? "    " : "│   "), true); 
+    }
+
+    public int CalculateError(List<WineSample> data)
+    {
+        int errors = 0;
+        foreach (var sample in data)
+        {
+            if (Predict(sample) != sample.Cultivar)
+            {
+                errors++;
+            }
+        }
+        return errors;
     }
 }

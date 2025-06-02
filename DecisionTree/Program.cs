@@ -43,9 +43,12 @@ public class Program
         var random = new Random();
         var shuffledData = allWineData.OrderBy(x => random.Next()).ToList();
 
-        int trainingSize = (int)(allWineData.Count * 0.8); //daje klasyczne 80% na terning
+        int trainingSize = (int)(allWineData.Count * 0.7); 
+        int validationSize = (int)(allWineData.Count * 0.15); //dodaje takie bo to do walidacyjnego
+
         List<WineSample> trainingData = shuffledData.Take(trainingSize).ToList();
-        List<WineSample> testData = shuffledData.Skip(trainingSize).ToList();
+        List<WineSample> validationData = shuffledData.Skip(trainingSize).Take(validationSize).ToList();
+        List<WineSample> testData = shuffledData.Skip(trainingSize + validationSize).ToList();
 
         while (true)
         {
@@ -73,8 +76,9 @@ public class Program
 
             if (criterion == null) continue;
 
-            Console.WriteLine($"Całkowita liczba próbek: {allWineData.Count}");
+            Console.WriteLine($"\nCałkowita liczba próbek: {allWineData.Count}");
             Console.WriteLine($"Próbek treningowych: {trainingData.Count}");
+            Console.WriteLine($"Próbek walidacyjnych: {validationData.Count}");
             Console.WriteLine($"Próbek testowych: {testData.Count}");
             Console.WriteLine("------------------------------------------");
 
@@ -83,13 +87,32 @@ public class Program
 
             Console.WriteLine("Trening zakończony.");
             Console.WriteLine("------------------------------------------");
+
+            IDecisionNode finalTree = trainedTree;
+
+            Console.Write("Czy chcesz przyciąć drzewo? (tak/nie): ");
+            string pruneChoice = Console.ReadLine()?.ToLower();
+
+            if (pruneChoice == "tak")
+            {
+                Console.WriteLine("Rozpoczynam przycinanie drzewa...");
+                finalTree = trainer.PruneTree(trainedTree, validationData);
+                Console.WriteLine("Przycinanie zakończone.");
+                Console.WriteLine("------------------------------------------");
+            }
+            else
+            {
+                Console.WriteLine("Drzewo nie zostanie przycięte.");
+                Console.WriteLine("------------------------------------------");
+            }
+
             Console.WriteLine("Ocena na danych testowych:");
 
-            EvaluateTree(trainedTree, testData);
+            EvaluateTree(finalTree, testData);
 
             Console.WriteLine("------------------------------------------");
             Console.WriteLine("Struktura drzewa decyzyjnego (└── = PRAWDA , ├── = FAŁSZ)");
-            trainedTree.PrintTree();
+            finalTree.PrintTree();
             Console.WriteLine("------------------------------------------");
 
             Console.WriteLine("Naciśnij Enter, aby kontynuować, lub '0' aby zakończyć.");
