@@ -55,7 +55,7 @@ public class Program
             Console.WriteLine("Wybierz algorytm budowy drzewa:");
             Console.WriteLine("1. Gini");
             Console.WriteLine("2. Entropia");
-            Console.WriteLine("3. C4.5");
+            Console.WriteLine("3. Information Gain");
             Console.WriteLine("0. Wyjście");
             Console.Write("Twój wybór: ");
             var input = Console.ReadLine();
@@ -112,14 +112,12 @@ public class Program
 
             Console.WriteLine("------------------------------------------");
             Console.WriteLine("Struktura drzewa decyzyjnego (└── = PRAWDA , ├── = FAŁSZ)");
-            finalTree.PrintTree();
+            finalTree.PrintTree(testData);
             Console.WriteLine("------------------------------------------");
 
             Console.WriteLine("Naciśnij Enter, aby kontynuować, lub '0' aby zakończyć.");
             if (Console.ReadLine() == "0") break;
 
-
-            //TODO może umozliwic uzytkownikowi jescze dodanie na koncu nowego Sampla na testa ?? ale nie wiem czy ma to sens
         }
     }
 

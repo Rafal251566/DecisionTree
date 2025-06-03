@@ -69,10 +69,8 @@
 
         var (trueData, falseData) = SplitData(data, bestFeature, bestThreshold);
 
-        List<string> remainingFeatures = features.ToList();
-
-        IDecisionNode trueChild = BuildTree(trueData, remainingFeatures, currentDepth + 1);
-        IDecisionNode falseChild = BuildTree(falseData, remainingFeatures, currentDepth + 1);
+        IDecisionNode trueChild = BuildTree(trueData, features, currentDepth + 1);
+        IDecisionNode falseChild = BuildTree(falseData, features, currentDepth + 1);
 
         return new InternalNode(bestFeature, bestThreshold, trueChild, falseChild);
     }

@@ -50,7 +50,7 @@ public interface ISplitCriterion
 public interface IDecisionNode
 {
     string Predict(WineSample sample);
-    void PrintTree(string indent = "", bool isLast = true);
+    void PrintTree(List<WineSample> data, string indent = "", bool isLast = true);
     int CalculateError(List<WineSample> data);
 }
 
@@ -69,11 +69,22 @@ public class LeafNode : IDecisionNode
         return Cultivar;
     }
 
-    public void PrintTree(string indent = "", bool isLast = true)
+    public void PrintTree(List<WineSample> data, string indent = "", bool isLast = true)
     {
+
+        //ZWYKLE WYSWIETLANIE
+
         Console.Write(indent);
         Console.Write(isLast ? "└── " : "├── ");  // UWAGA ten pierwszy kikut to PRAWDA a ten drugi to FAŁSZ
         Console.WriteLine($"Kultywar: {Cultivar}");
+
+
+        //SZCZEGÓŁOWE WYSWIETLANIE 
+
+        //Console.Write(indent);
+        //Console.Write(isLast ? "└── " : "├── ");
+        //var cultivarCounts = data.GroupBy(s => s.Cultivar).OrderBy(g => g.Key).Select(g => $"{g.Key}: {g.Count()}").ToList();
+        //Console.WriteLine($"Kultywar: {Cultivar} (Łącznie próbek: {data.Count}) - Rozkład: [{string.Join(", ", cultivarCounts)}]");
     }
 
     public int CalculateError(List<WineSample> data)
@@ -118,14 +129,29 @@ public class InternalNode : IDecisionNode
         }
     }
 
-    public void PrintTree(string indent = "", bool isLast = true)
+    public void PrintTree(List<WineSample> data, string indent = "", bool isLast = true)
     {
         Console.Write(indent);
-        Console.Write(isLast ? "└── " : "├── "); // UWAGA ten pierwszy kikut to PRAWDA a ten drugi to FAŁSZ
-        Console.WriteLine($"Test: {FeatureName} > {Threshold:F2}");
+        Console.Write(isLast ? "└── " : "├── ");
+        Console.WriteLine($"Test: {FeatureName} > {Threshold:F2} (Próbki: {data.Count})");
 
-        FalseChild.PrintTree(indent + (isLast ? "    " : "│   "), false);
-        TrueChild.PrintTree(indent + (isLast ? "    " : "│   "), true); 
+        var trueData = new List<WineSample>();
+        var falseData = new List<WineSample>();
+
+        foreach (var sample in data)
+        {
+            if (sample.GetFeatureValue(FeatureName) > Threshold)
+            {
+                trueData.Add(sample);
+            }
+            else
+            {
+                falseData.Add(sample);
+            }
+        }
+
+        FalseChild.PrintTree(falseData, indent + (isLast ? "    " : "│   "), false);
+        TrueChild.PrintTree(trueData, indent + (isLast ? "    " : "│   "), true);   
     }
 
     public int CalculateError(List<WineSample> data)
