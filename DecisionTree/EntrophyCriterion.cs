@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DecisionTree
+﻿namespace DecisionTree
 {
 
     //TO CHYUBA NIE MA SENSU?  WYCHODZI NA TO ZE MOZE JEDNAK MA BO OSIAGA NAJLEPSZE WYNIKI 

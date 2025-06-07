@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using DecisionTree;
+﻿using DecisionTree;
 
 public class Program
 {
@@ -43,7 +39,7 @@ public class Program
         var random = new Random();
         var shuffledData = allWineData.OrderBy(x => random.Next()).ToList();
 
-        int trainingSize = (int)(allWineData.Count * 0.7); 
+        int trainingSize = (int)(allWineData.Count * 0.1); 
         int validationSize = (int)(allWineData.Count * 0.15); //dodaje takie bo to do walidacyjnego
 
         List<WineSample> trainingData = shuffledData.Take(trainingSize).ToList();
@@ -52,28 +48,46 @@ public class Program
 
         while (true)
         {
+            ISplitCriterion? criterion = null;
+            bool exitLoop = false;
+
             Console.WriteLine("Wybierz algorytm budowy drzewa:");
             Console.WriteLine("1. Gini");
             Console.WriteLine("2. Entropia");
             Console.WriteLine("3. Information Gain");
+            Console.WriteLine("4. Wyczyść konsolę");
             Console.WriteLine("0. Wyjście");
             Console.Write("Twój wybór: ");
-            var input = Console.ReadLine();
 
-            if (input == "0")
+            switch (Console.ReadLine())
             {
-                Console.WriteLine("Zamykanie programu...");
-                break;
+                case "0":
+                    Console.WriteLine("Zamykanie programu...");
+                    exitLoop = true;
+                    break;
+
+                case "1":
+                    criterion = new GiniCriterion();
+                    break;
+
+                case "2":
+                    criterion = new EntropyCriterion();
+                    break;
+
+                case "3":
+                    criterion = new C45Criterion();
+                    break;
+
+                case "4":
+                    Console.Clear();
+                    break;
+
+                default:
+                    Console.WriteLine("Nieprawidłowy wybór.");
+                    break;
             }
 
-            ISplitCriterion? criterion = input switch
-            {
-                "1" => new GiniCriterion(),
-                "2" => new EntropyCriterion(),
-                "3" => new C45Criterion(),
-                _ => null
-            };
-
+            if (exitLoop) break;
             if (criterion == null) continue;
 
             Console.WriteLine($"\nCałkowita liczba próbek: {allWineData.Count}");

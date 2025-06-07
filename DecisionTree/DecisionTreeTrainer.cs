@@ -1,4 +1,6 @@
-﻿public class DecisionTreeTrainer
+﻿using DecisionTree;
+
+public class DecisionTreeTrainer
 {
     private readonly int maxDepth;
     private readonly int minSamplesSplit;
