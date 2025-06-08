@@ -39,7 +39,7 @@ public class Program
         var random = new Random();
         var shuffledData = allWineData.OrderBy(x => random.Next()).ToList();
 
-        int trainingSize = (int)(allWineData.Count * 0.1); 
+        int trainingSize = (int)(allWineData.Count * 0.7); 
         int validationSize = (int)(allWineData.Count * 0.15); //dodaje takie bo to do walidacyjnego
 
         List<WineSample> trainingData = shuffledData.Take(trainingSize).ToList();
