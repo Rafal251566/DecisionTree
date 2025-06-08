@@ -54,7 +54,7 @@ public class Program
             Console.WriteLine("Wybierz algorytm budowy drzewa:");
             Console.WriteLine("1. Gini");
             Console.WriteLine("2. Entropia");
-            Console.WriteLine("3. Information Gain");
+            Console.WriteLine("3. Gain ratio");
             Console.WriteLine("4. Wyczyść konsolę");
             Console.WriteLine("0. Wyjście");
             Console.Write("Twój wybór: ");
