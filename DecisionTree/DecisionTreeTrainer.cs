@@ -91,17 +91,21 @@ public class DecisionTreeTrainer
             internalNode.TrueChild = PruneTree(internalNode.TrueChild, trueValSet);
             internalNode.FalseChild = PruneTree(internalNode.FalseChild, falseValSet);
 
-
             int errorIfKept = internalNode.CalculateError(validationDataForThisNode);
 
             string majorityClass = GetMajorityCultivar(validationDataForThisNode);
             LeafNode candidateLeaf = new LeafNode(majorityClass);
-
             int errorIfPruned = candidateLeaf.CalculateError(validationDataForThisNode);
 
-            if (errorIfPruned < errorIfKept)
+            bool childrenAreLeavesWithSameLabel =
+                internalNode.TrueChild is LeafNode trueLeaf &&
+                internalNode.FalseChild is LeafNode falseLeaf &&
+                trueLeaf.Cultivar == falseLeaf.Cultivar;
+
+            if (errorIfPruned < errorIfKept || childrenAreLeavesWithSameLabel)
             {
-                Console.WriteLine($"Przycęto węzeł '{internalNode.FeatureName} > {internalNode.Threshold:F2}'. Błąd poddrzewa przed: {errorIfKept}, błąd po przycięciu: {errorIfPruned}.");
+                Console.WriteLine($"Przycęto węzeł '{internalNode.FeatureName} > {internalNode.Threshold:F2}'. " +
+                                  $"Błąd poddrzewa przed: {errorIfKept}, błąd po przycięciu: {errorIfPruned}.");
                 return candidateLeaf;
             }
         }
